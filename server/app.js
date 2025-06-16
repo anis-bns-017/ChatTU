@@ -5,10 +5,11 @@ dotenv.config({ path: "./.env" });
 import express from "express";
 import userRoute from "./routes/user.js";
 import connectDB from "./utils/features.js";
+import errorMiddleware from "./middlewares/error.js";
 
 // Extract variables
 const mongoURI = process.env.MONGO_URI;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 // Fail fast if no URI
 if (!mongoURI) {
@@ -20,19 +21,22 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-connectDB(mongoURI).catch(err => {
+connectDB(mongoURI).catch((err) => {
   console.error("❌ Failed to connect to MongoDB:", err);
   process.exit(1);
 });
 
-// Routes
-app.use("/user", userRoute);
-
 app.get("/", (req, res) => {
   res.send("✅ Welcome to the server!");
 });
+
+app.use(errorMiddleware); 
+
+// Routes
+app.use("/user", userRoute);
 
 // Start server
 app.listen(port, () => {
