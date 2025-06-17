@@ -1,6 +1,8 @@
 import { compare, setRandomFallback } from "bcryptjs";
 import { User } from "../models/user.js";
 import { sendToken } from "../utils/features.js";
+import { TryCatch } from "../middlewares/error.js";
+import { ErrorHandler } from "../utils/utility.js";
 
 const newUser = async (req, res) => {
   const { name, username, password, bio } = req.body;
@@ -28,7 +30,7 @@ const newUser = async (req, res) => {
   }
 };
 
-const login = async (req, res, next) => {
+const login = TryCatch(async (req, res, next) => {
   const { username, password } = req.body;
   const trimmedUsername = username.trim();
   const trimmedPassword = password.trim();
@@ -36,10 +38,7 @@ const login = async (req, res, next) => {
   console.log("Trimmed Password:", trimmedPassword);
 
   if (!trimmedUsername || !trimmedPassword) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide username and password",
-    });
+    return new ErrorHandler(400, "Username and password are required");
   }
 
   const user = await User.findOne({ username: trimmedUsername }).select(
@@ -47,29 +46,72 @@ const login = async (req, res, next) => {
   );
 
   if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "User not found",
-    });
+    return new ErrorHandler(401, "Invalid username or password");
   }
 
   const isPasswordMatched = await compare(trimmedPassword, user.password);
 
   if (!isPasswordMatched) {
-    return res.status(401).json({
-      // Added `return` here
-      success: false,
-      message: "Invalid username or password",
-    });
+    return new ErrorHandler(401, "Invalid username or password");
   }
 
   sendToken(res, user, 200, `Welcome back, ${user.name}!`);
-};
+});
 
-const getProfile = async (req, res) => {
+const getMyProfile = async (req, res) => {
+  await User.findById(req.user)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+      req.user = user;
+    })
+    .catch((error) => {
+      console.error("Error fetching user profile:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error fetching user profile",
+        error: error.message,
+      });
+    });
   return await res.status(200).json({
     success: true,
     user: req.user,
   });
 };
-export { login, newUser, getProfile };
+
+const logout = TryCatch(async (req, res) => {
+  return res
+    .status(200)
+    .cookie("token", null, {
+      expires: new Date(Date.now()),
+      httpOnly: true,
+      secure: true, // Set to true if using HTTPS
+      sameSite: "none", // Adjust based on your requirements
+    })
+    .json({
+      success: true,
+      message: "Logged out successfully",
+    });
+});
+
+const searchUser = TryCatch(async (req, res) => {
+
+  const { name } = req.query;
+  if (!name) {
+    return res.status(400).json({
+      success: false,
+      message: "Name query parameter is required",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: name,
+  });
+});
+
+export { login, newUser, getMyProfile, logout, searchUser };

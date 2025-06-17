@@ -48,5 +48,11 @@ export const sendToken = (res, user, code, message) => {
     // user,
   });
 };
- 
+
+export const emitEvent = (req, event, users, data) => {
+  console.log(`Emitting event: ${event} to users: ${users.join(", ")}`);
+  // Here you would typically use a library like Socket.IO to emit the event
+  // For example: io.to(users).emit(event, data);
+};
+
 export default connectDB;

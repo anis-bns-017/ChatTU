@@ -4,8 +4,10 @@ dotenv.config({ path: "./.env" });
 
 import express from "express";
 import userRoute from "./routes/user.js";
+import chatRoute from "./routes/chat.js";
 import connectDB from "./utils/features.js";
 import errorMiddleware from "./middlewares/error.js";
+import cookieParser from "cookie-parser";
 
 // Extract variables
 const mongoURI = process.env.MONGO_URI;
@@ -21,7 +23,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Connect to MongoDB
 connectDB(mongoURI).catch((err) => {
@@ -37,6 +39,7 @@ app.use(errorMiddleware);
 
 // Routes
 app.use("/user", userRoute);
+app.use("/chat", chatRoute);
 
 // Start server
 app.listen(port, () => {
