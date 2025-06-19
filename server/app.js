@@ -8,6 +8,7 @@ import chatRoute from "./routes/chat.js";
 import connectDB from "./utils/features.js";
 import errorMiddleware from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
+import { createUserChat } from "./seeders/userChat.js";
 
 // Extract variables
 const mongoURI = process.env.MONGO_URI;
@@ -30,6 +31,8 @@ connectDB(mongoURI).catch((err) => {
   console.error("❌ Failed to connect to MongoDB:", err);
   process.exit(1);
 });
+
+// createUserChat(10);
 
 app.get("/", (req, res) => {
   res.send("✅ Welcome to the server!");
