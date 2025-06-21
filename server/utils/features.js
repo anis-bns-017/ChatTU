@@ -55,4 +55,7 @@ export const emitEvent = (req, event, users, data) => {
   // For example: io.to(users).emit(event, data);
 };
 
+export const deleteFilesFromCloudinary = async(public_ids) => {
+
+}
 export default connectDB;

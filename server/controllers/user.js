@@ -34,8 +34,7 @@ const login = TryCatch(async (req, res, next) => {
   const { username, password } = req.body;
   const trimmedUsername = username.trim();
   const trimmedPassword = password.trim();
-  console.log("Trimmed Username:", trimmedUsername);
-  console.log("Trimmed Password:", trimmedPassword);
+
 
   if (!trimmedUsername || !trimmedPassword) {
     return new ErrorHandler(400, "Username and password are required");
@@ -54,6 +53,7 @@ const login = TryCatch(async (req, res, next) => {
   if (!isPasswordMatched) {
     return new ErrorHandler(401, "Invalid username or password");
   }
+
 
   sendToken(res, user, 200, `Welcome back, ${user.name}!`);
 });
