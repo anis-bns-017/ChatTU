@@ -8,8 +8,8 @@ import chatRoute from "./routes/chat.js";
 import connectDB from "./utils/features.js";
 import errorMiddleware from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
-import { createUserChat } from "./seeders/userChat.js";
-
+import { createGroupChats, createMessagesInChat, createSingleChats } from "./seeders/chat.js";
+ 
 // Extract variables
 const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT || 8000;
@@ -31,6 +31,11 @@ connectDB(mongoURI).catch((err) => {
   console.error("❌ Failed to connect to MongoDB:", err);
   process.exit(1);
 });
+
+// createSingleChats(10);
+// createGroupChats(10);
+// createMessagesInChat("6856d6aee3dceb50fcc86092", 50);
+
 
 // createUserChat(10);
 

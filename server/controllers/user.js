@@ -35,7 +35,6 @@ const login = TryCatch(async (req, res, next) => {
   const trimmedUsername = username.trim();
   const trimmedPassword = password.trim();
 
-
   if (!trimmedUsername || !trimmedPassword) {
     return new ErrorHandler(400, "Username and password are required");
   }
@@ -53,7 +52,6 @@ const login = TryCatch(async (req, res, next) => {
   if (!isPasswordMatched) {
     return new ErrorHandler(401, "Invalid username or password");
   }
-
 
   sendToken(res, user, 200, `Welcome back, ${user.name}!`);
 });
@@ -99,8 +97,13 @@ const logout = TryCatch(async (req, res) => {
 });
 
 const searchUser = TryCatch(async (req, res) => {
-
   const { name } = req.query;
+
+  const myChats = await User.find({
+    groupChat: false,
+    members: req.user,
+  });
+
   if (!name) {
     return res.status(400).json({
       success: false,
@@ -110,7 +113,7 @@ const searchUser = TryCatch(async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    message: name,
+    myChats,
   });
 });
 

@@ -1,7 +1,7 @@
-import { User } from "../models/user.js";
 import { faker } from "@faker-js/faker";
+import { User } from "../models/user.js";
 
-const createUserChat = async (numUsers) => {
+export const createUserChat = async (numUsers) => {
   try {
     const usersPromise = [];
 
@@ -9,10 +9,10 @@ const createUserChat = async (numUsers) => {
       const tempUser = User.create({
         name: faker.person.fullName(),
         username: faker.internet.userName(),
-        password: "password123", // Use a default password for seeding
+        password: "password123",
         avatar: {
           public_id: faker.system.fileName(),
-          url: "D:\CHATTU\client\src\assets\girl.jpg",
+          url: "D:CHATTUclientsrcassetsgirl.jpg",
         },
         bio: faker.lorem.sentence(10),
       });
@@ -20,14 +20,14 @@ const createUserChat = async (numUsers) => {
       usersPromise.push(tempUser);
     }
 
-    await Promise.all(usersPromise);
+    const users = await Promise.all(usersPromise);
     console.log(`${numUsers} users created successfully!`);
-    return usersPromise;
-    process.exit(1);
+    return users;
   } catch (error) {
     console.error("Error creating UserChat:", error);
     process.exit(1);
   }
 };
 
-export { createUserChat };
+
+ 
