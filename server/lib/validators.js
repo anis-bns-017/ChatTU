@@ -74,3 +74,23 @@ export const renameValidator = () => [
   param("id", "Please enter ChatID").notEmpty(),
   body("name", "Please enter New Name").notEmpty(),
 ];
+
+export const sendRequestValidator = () => [
+  body("userId", "Please enter User ID").notEmpty(),
+];
+
+export const acceptRequestValidator = () => [
+  body("requestId", "Please enter Request ID").notEmpty(),
+  body("accept", "Please Add Accept")
+    .notEmpty()
+    .isBoolean()
+    .withMessage("Accept must be a boolean"),
+];
+
+export const getAllNotificationsValidator = () => [
+  body("requestId", "Please enter Request ID").notEmpty(),
+  body("accpet", "Please Add Accept")
+    .notEmpty()
+    .isBoolean()
+    .withMessage("Accept must be a boolean"),
+];
