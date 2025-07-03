@@ -7,8 +7,11 @@ import { Chat } from "../models/chat.js";
 import { Request } from "../models/request.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 
-const newUser = async (req, res) => {
+const newUser = TryCatch(async (req, res) => {
   const { name, username, password, bio } = req.body;
+
+  const file = req.file;
+  if (!file) return ErrorHandler(res, "Please upload avatar", 404);
 
   try {
     const user = await User.create({
@@ -31,7 +34,7 @@ const newUser = async (req, res) => {
       error: error.message,
     });
   }
-};
+});
 
 const login = TryCatch(async (req, res, next) => {
   const { username, password } = req.body;
@@ -174,13 +177,14 @@ const acceptFriendRequest = TryCatch(async (req, res) => {
     .populate("receiver", "name");
 
   if (!request) {
-    throw new ErrorHandler(404, "Friend request not found");
+    return ErrorHandler(res, "Friend request not found", 404);
   }
 
   if (request.receiver._id.toString() !== req.user.toString()) {
-    throw new ErrorHandler(
-      401,
-      "You are not authorized to accept this request"
+    return ErrorHandler(
+      res,
+      "You are not authorized to accept this request",
+      401
     );
   }
 
@@ -267,7 +271,7 @@ const getMyFriends = TryCatch(async (req, res) => {
   } else {
     return res.status(200).json({
       success: true,
-      friends ,
+      friends,
     });
   }
 });

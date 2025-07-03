@@ -250,6 +250,16 @@ const leaveGroup = TryCatch(async (req, res, next) => {
 const sendAttachments = TryCatch(async (req, res, next) => {
   const { chatId } = req.body;
 
+  const files = req.files || [];
+
+  if (files.length < 1) {
+    return ErrorHandler(res, "Please Upload Attachments", 400);
+  }
+
+  if (files.length > 5) {
+    return ErrorHandler(res, "Files can't be more than 5", 500);
+  }
+
   const [chat, me] = await Promise.all([
     Chat.findById(chatId),
     User.findById(req.user, "name"),
@@ -260,8 +270,6 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   if (!chat) return ErrorHandler(res, "Chat not found", 404);
 
   if (!me) return ErrorHandler(res, "User not found", 404);
-
-  const files = req.files || [];
 
   if (files.length < 1) return ErrorHandler(res, "No files attached", 400);
 
@@ -419,11 +427,10 @@ const getMessages = TryCatch(async (req, res, next) => {
 
   const totalPages = Math.ceil(totalMessageCount / resultPerPage);
 
-
   return res.status(200).json({
     success: true,
     messages: messages.reverse(),
-    totalPages
+    totalPages,
   });
 });
 

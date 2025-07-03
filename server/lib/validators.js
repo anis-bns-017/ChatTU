@@ -22,7 +22,6 @@ export const registerValidator = () => [
   body("username", "Please enter Username").notEmpty(),
   body("bio", "Please enter Bio").notEmpty(),
   body("password", "Please enter Password").notEmpty(),
-  check("avatar", "Please upload avatar").notEmpty(),
 ];
 
 export const loginValidator = () => [
@@ -55,11 +54,6 @@ export const removeMembersValidator = () => [
 
 export const sendAttachmentsValidator = () => [
   body("chatId", "Please enter ChatID").notEmpty(),
-  check("files")
-    .notEmpty()
-    .withMessage("Please upload Attachments")
-    .isArray({ min: 1, max: 5 })
-    .withMessage("Attachments must be in 1-5"),
 ];
 
 export const getMessagesValidator = () => [
@@ -85,6 +79,10 @@ export const acceptRequestValidator = () => [
     .notEmpty()
     .isBoolean()
     .withMessage("Accept must be a boolean"),
+];
+
+export const adminLoginValidator = () => [
+  body("secretKey", "Please enter secret Key").notEmpty(),
 ];
 
 export const getAllNotificationsValidator = () => [

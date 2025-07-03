@@ -76,7 +76,6 @@ const ChatManagement = () => {
       }))
     );
   }, []);
-npm install mongodb
   return (
     <AdminLayout>
       <Table heading={"All Chats"} columns={columns} rows={rows} />

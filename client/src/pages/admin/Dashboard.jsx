@@ -30,41 +30,38 @@ const Dashboard = () => {
     <Paper
       elevation={4}
       sx={{
-        padding: { xs: "1.2rem", md: "2rem" },
-        margin: "2rem 0",
+        p: { xs: "1.2rem", md: "2rem" },
+        m: "2rem 0",
         borderRadius: "1.5rem",
-        background: `linear-gradient(90deg, ${theme.palette.primary.light} 0%, ${theme.palette.secondary.light} 100%)`,
-        boxShadow: "0 4px 24px rgba(33,150,243,0.08)",
+        backdropFilter: "blur(8px)",
+        background: `linear-gradient(90deg, ${theme.palette.primary.light}99 0%, ${theme.palette.secondary.light}99 100%)`,
+        boxShadow: "0 4px 24px rgba(33,150,243,0.15)",
       }}
     >
-      <Stack direction={"row"} alignItems={"center"} spacing={2}>
+      <Stack direction="row" alignItems="center" spacing={2}>
         <Avatar
-          sx={{
-            bgcolor: theme.palette.primary.main,
-            width: 56,
-            height: 56,
-            mr: 2,
-          }}
+          sx={{ bgcolor: theme.palette.primary.main, width: 56, height: 56 }}
         >
           <AdminPanelSettingsIcon sx={{ fontSize: "2rem" }} />
         </Avatar>
+
         <SearchField placeholder="Search..." sx={{ flex: 1, maxWidth: 320 }} />
         <CurveButton sx={{ ml: 1, px: 4, py: 1.2, fontWeight: 600 }}>
           Search
         </CurveButton>
+
         <Box flexGrow={1} />
+
         <Typography
-          display={{
-            xs: "none",
-            lg: "block",
-          }}
-          color="rgba(0, 0, 0, 0.7)"
-          textAlign={"center"}
+          display={{ xs: "none", lg: "block" }}
+          color="rgba(0,0,0,0.7)"
+          textAlign="center"
           fontWeight={500}
           fontSize={18}
         >
           {moment().format("MMM Do YYYY")}
         </Typography>
+
         <NotificationsIcon
           sx={{ fontSize: 32, color: theme.palette.primary.main, ml: 2 }}
         />
@@ -74,24 +71,17 @@ const Dashboard = () => {
 
   const Widgets = (
     <Stack
-      direction={{
-        xs: "column",
-        sm: "row",
-      }}
-      spacing={"2rem"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      margin="2rem 0"
+      direction={{ xs: "column", sm: "row" }}
+      spacing="2rem"
+      justifyContent="space-between"
+      alignItems="center"
+      m="2rem 0"
+      flexWrap="wrap"
     >
+      <Widget title="Users" value={34} icon={<PersonIcon />} color="#42a5f5" />
+      <Widget title="Chats" value={3} icon={<GroupIcon />} color="#66bb6a" />
       <Widget
-        title={"Users"}
-        value={34}
-        icon={<PersonIcon />}
-        color="#42a5f5"
-      />
-      <Widget title={"Chats"} value={3} icon={<GroupIcon />} color="#66bb6a" />
-      <Widget
-        title={"Messages"}
+        title="Messages"
         value={234}
         icon={<MessageIcon />}
         color="#ffa726"
@@ -101,81 +91,67 @@ const Dashboard = () => {
 
   return (
     <AdminLayout>
-      <Container component={"main"} sx={{ py: 4, maxWidth: "xl" }}>
+      <Container component="main" sx={{ py: 4, maxWidth: "xl" }}>
         {Appbar}
         <Stack
-          direction={{
-            xs: "column",
-            lg: "row",
-          }}
-          flexWrap={"wrap"}
-          justifyContent={"center"}
-          alignItems={{
-            xs: "center",
-            lg: "stretch",
-          }}
-          sx={{
-            gap: "2rem",
-          }}
+          direction={{ xs: "column", lg: "row" }}
+          justifyContent="center"
+          alignItems="stretch"
+          flexWrap="wrap"
+          gap="2rem"
         >
           <Paper
             elevation={4}
             sx={{
-              padding: { xs: "1.5rem", md: "2rem 3.5rem" },
+              p: { xs: "1.5rem", md: "2rem 3.5rem" },
               borderRadius: "1.5rem",
               width: "100%",
               maxWidth: "45rem",
               height: { xs: "22rem", md: "30rem" },
-              background: "linear-gradient(135deg, #e3f2fd 0%, #fce4ec 100%)",
-              boxShadow: "0 8px 32px rgba(33,150,243,0.10)",
+              background: "linear-gradient(135deg, #bbdefb 0%, #f8bbd0 100%)",
+              boxShadow: "0 8px 32px rgba(33,150,243,0.15)",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
             }}
           >
-            <Typography
-              margin={"1rem 0 2rem"}
-              variant="h4"
-              fontWeight={700}
-              color="primary"
-            >
+            <Typography variant="h4" fontWeight={700} color="primary" mb={2}>
               Last Messages
             </Typography>
             <LineChart value={[12, 19, 3, 5, 2, 3, 7, 8, 6, 4, 10, 9]} />
           </Paper>
 
           <Paper
-            elevation={4}
+            elevation={6}
             sx={{
-              padding: "1.5rem",
+              p: "1.5rem",
               borderRadius: "1.5rem",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              width: {
-                xs: "100%",
-                sm: "50%",
-              },
-              position: "relative",
+              width: { xs: "100%", sm: "50%" },
               maxWidth: "25rem",
               minHeight: "22rem",
-              background: "linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%)",
-              boxShadow: "0 8px 32px rgba(33,150,243,0.10)",
+              backdropFilter: "blur(10px)",
+              background: "rgba(255, 255, 255, 0.25)",
+              border: "1px solid rgba(255,255,255,0.18)",
+              boxShadow: "0 8px 32px rgba(33,150,243,0.18)",
+              transition: "transform 0.3s ease",
+              "&:hover": { transform: "scale(1.03)" },
             }}
           >
             <DoughnutChart
               value={[12, 19, 3, 5, 2, 3, 7, 8, 6]}
               labels={["Single Chats", "Group Chats"]}
             />
-
             <Stack
-              position={"absolute"}
-              direction={"row"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              spacing={"0.5rem"}
-              width={"100%"}
-              height={"100%"}
+              position="absolute"
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              spacing="0.5rem"
+              width="100%"
+              height="100%"
               sx={{
                 top: 0,
                 left: 0,
@@ -198,22 +174,23 @@ const Dashboard = () => {
 
 const Widget = ({ title, value, icon, color }) => (
   <Paper
-    elevation={6}
+    elevation={8}
     sx={{
       p: 3,
       borderRadius: "2rem",
       width: "18rem",
       minHeight: "12rem",
+      backdropFilter: "blur(10px)",
+      background: "rgba(255, 255, 255, 0.3)",
+      border: "1px solid rgba(255,255,255,0.2)",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-      boxShadow: "0 8px 32px rgba(33,150,243,0.10)",
-      transition: "transform 0.2s, box-shadow 0.2s",
+      transition: "transform 0.3s ease, box-shadow 0.3s ease",
       "&:hover": {
-        transform: "translateY(-6px) scale(1.04)",
-        boxShadow: "0 16px 40px rgba(33,150,243,0.18)",
+        transform: "translateY(-8px) scale(1.05)",
+        boxShadow: "0 12px 40px rgba(33,150,243,0.25)",
       },
     }}
   >
@@ -223,32 +200,22 @@ const Widget = ({ title, value, icon, color }) => (
         width: 64,
         height: 64,
         bgcolor: color,
-        boxShadow: `0 4px 16px ${color}33`,
+        boxShadow: `0 0 12px ${color}88`,
         fontSize: 36,
       }}
     >
       {icon}
     </Avatar>
-    <Typography
-      variant="h3"
-      sx={{
-        fontWeight: 800,
-        color: "#222",
-        mb: 1,
-        fontSize: "2.5rem",
-      }}
-    >
+    <Typography variant="h3" fontWeight={800} color="#222" mb={1}>
       {value}
     </Typography>
     <Typography
       variant="subtitle1"
-      sx={{
-        color: "rgba(0,0,0,0.6)",
-        letterSpacing: 1,
-        textTransform: "uppercase",
-        fontWeight: 600,
-        fontSize: 16,
-      }}
+      color="rgba(0,0,0,0.7)"
+      letterSpacing={1}
+      textTransform="uppercase"
+      fontWeight={600}
+      fontSize={16}
     >
       {title}
     </Typography>
