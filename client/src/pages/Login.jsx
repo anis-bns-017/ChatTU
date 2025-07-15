@@ -16,8 +16,14 @@ import { useFileHandler, useInputValidation } from "6pp";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { VisuallyHiddenInput } from "../components/styles/StyleComponents";
 import { usernameValidator } from "../utils/validators";
+import axios from "axios";
+import { server } from "../components/constants/config";
+import { useDispatch } from "react-redux";
+import { userExists } from "../redux/reducers/auth";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [isLogin, setIsLogin] = useState(true);
   const name = useInputValidation("");
   const bio = useInputValidation("");
@@ -30,12 +36,85 @@ const Login = () => {
     setIsLogin((prev) => !prev);
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("avatar", avatar.file);
+    formData.append("name", name.value);
+    formData.append("bio", bio.value);
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+ 
+    try {
+      const data = await axios.post(
+        `${server}/api/v1/user/new-user`,
+        formData,
+        config
+      );
+
+      dispatch(userExists(true));
+      toast.success(data.message);
+    } catch (error) {
+      // Fixed error handling
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
+
+      // For debugging:
+      console.error("SignUp error:", {
+        status: error?.response?.status,
+        data: error?.response?.data,
+        fullError: error,
+      });
+    }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      const { data } = await axios.post(
+        `${server}/api/v1/user/login`,
+        {
+          username: username.value,
+          password: password.value,
+        },
+        config
+      );
+      dispatch(userExists(true));
+      toast.success(data.message);
+    } catch (error) {
+      // Fixed error handling
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage);
+
+      // For debugging:
+      console.error("Login error:", {
+        status: error?.response?.status,
+        data: error?.response?.data,
+        fullError: error,
+      });
+    }
   };
 
   return (

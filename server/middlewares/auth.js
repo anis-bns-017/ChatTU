@@ -10,7 +10,7 @@ export const isAuthenticated = TryCatch(async (req, res, next) => {
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "You are not authenticated",
+      message: "Please login to access this route",
     });
   }
 

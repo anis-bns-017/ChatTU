@@ -14,7 +14,7 @@ export const validateHandler = (req, res, next) => {
   console.log(errorMessages);
 
   if (errors.isEmpty()) return next();
-  else ErrorHandler(res, errorMessages, 400);
+  else return ErrorHandler(res, errorMessages, 400);
 };
 
 export const registerValidator = () => [

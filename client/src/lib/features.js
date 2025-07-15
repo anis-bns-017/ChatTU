@@ -1,22 +1,13 @@
 import moment from "moment";
 
 export const fileFormat = (url) => {
-  const fileExtension = url.split(".").pop();
+  const fileExtension = url.split(".").pop().toLowerCase();
 
-  if (
-    fileExtension === "mp4" ||
-    fileExtension === "webm" ||
-    fileExtension === "ogg"
-  )
-    return "video";
-  if (fileExtension === "mp3" || fileExtension === "wav") return "audio";
-  if (
-    fileExtension === "png" ||
-    fileExtension === "jpg" ||
-    fileExtension === "gif" ||
-    fileExtension === "jpeg"
-  )
+  if (["mp4", "webm", "ogg"].includes(fileExtension)) return "video";
+  if (["mp3", "wav"].includes(fileExtension)) return "audio";
+  if (["png", "jpg", "jpeg", "gif", "webp"].includes(fileExtension))
     return "image";
+
   return "file";
 };
 
@@ -28,7 +19,7 @@ export const getLast7Days = () => {
 
   for (let i = 0; i < 7; i++) {
     const dayDate = currentDate.clone().subtract(i, "days");
-    const dayName = dayDate.format("dddd")
+    const dayName = dayDate.format("dddd");
     last7Days.unshift(dayName);
   }
 

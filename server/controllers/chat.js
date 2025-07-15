@@ -65,7 +65,7 @@ const getMyChats = TryCatch(async (req, res, next) => {
     console.log("Other member:", otherMember);
 
     if (!otherMember) {
-      throw new ErrorHandler(404, "No other members found in the chat");
+      return ErrorHandler(res, "No other members found in the chat", 404);
     }
 
     return {

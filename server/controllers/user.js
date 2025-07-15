@@ -1,6 +1,10 @@
 import { compare, setRandomFallback } from "bcryptjs";
 import { User } from "../models/user.js";
-import { emitEvent, sendToken } from "../utils/features.js";
+import {
+  emitEvent,
+  sendToken,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { Chat } from "../models/chat.js";
@@ -11,17 +15,27 @@ const newUser = TryCatch(async (req, res) => {
   const { name, username, password, bio } = req.body;
 
   const file = req.file;
+
   if (!file) return ErrorHandler(res, "Please upload avatar", 404);
 
+  const results = await uploadFilesToCloudinary([file]);
+
+  if (!results || results.length === 0 || !results[0].secureUrl) {
+    return ErrorHandler(res, "Avatar upload failed", 500);
+  }
+ 
+  const avatar = {
+    public_id: results[0].public_id,
+    url: results[0].secureUrl,
+  };
+
+ 
   try {
     const user = await User.create({
       name,
       username,
       password,
-      avatar: {
-        public_id: "sample_public_id",
-        url: "https://example.com/avatar.jpg",
-      },
+      avatar,
       bio,
     });
 
@@ -42,7 +56,7 @@ const login = TryCatch(async (req, res, next) => {
   const trimmedPassword = password.trim();
 
   if (!trimmedUsername || !trimmedPassword) {
-    return new ErrorHandler(400, "Username and password are required");
+    return ErrorHandler(res, "Username and password are required", 400);
   }
 
   const user = await User.findOne({ username: trimmedUsername }).select(
@@ -50,13 +64,13 @@ const login = TryCatch(async (req, res, next) => {
   );
 
   if (!user) {
-    return new ErrorHandler(401, "Invalid username or password");
+    return ErrorHandler(res, "Invalid username or password", 401);
   }
 
   const isPasswordMatched = await compare(trimmedPassword, user.password);
 
   if (!isPasswordMatched) {
-    return new ErrorHandler(401, "Invalid username or password");
+    return ErrorHandler(res, "Invalid username or password", 401);
   }
 
   sendToken(res, user, 200, `Welcome back, ${user.name}!`);

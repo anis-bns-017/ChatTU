@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
+import { v4 as uuid } from "uuid";
 
 const connectDB = async () => {
   try {
@@ -34,7 +36,6 @@ const connectDB = async () => {
 export const sendToken = (res, user, code, message) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
 
-  
   const options = {
     expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 7 days
     httpOnly: true,
@@ -55,7 +56,49 @@ export const emitEvent = (req, event, users, data) => {
   // For example: io.to(users).emit(event, data);
 };
 
-export const deleteFilesFromCloudinary = async(public_ids) => {
+// ✅ Make sure Cloudinary is configured before calling this
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-}
+export const uploadFilesToCloudinary = async (files = []) => {
+  if (!files.length) throw new Error("No files provided for upload.");
+
+  const uploadPromises = files.map((file) => {
+    const base64Data = `data:${file.mimetype};base64,${file.buffer.toString(
+      "base64"
+    )}`;
+
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload(
+        base64Data,
+        {
+          resource_type: "auto",
+          public_id: uuid(),
+          folder: "uploads", // Optional: organize in a folder
+          timeout: 60000, // ⏱ Optional: 60 sec timeout to avoid hanging
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve({
+            public_id: result.public_id,
+            secureUrl: result.secure_url,
+          });
+        }
+      );
+    });
+  });
+
+  try {
+    const results = await Promise.all(uploadPromises);
+    return results;
+  } catch (error) {
+    console.error("❌ Cloudinary upload error:", error);
+    throw new Error("Error uploading files to Cloudinary: " + error.message);
+  }
+};
+
+export const deleteFilesFromCloudinary = async (public_ids) => {};
 export default connectDB;
